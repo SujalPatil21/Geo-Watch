@@ -87,7 +87,7 @@ GeoWatch aggregates these reports and applies **geospatial clustering** to detec
 
 ### Heatmap Visualization
 
-![Heatmap Display](img4.jpeg)
+![Heatmap Display](img4.png)
 
 *Figure 4: Real-time heatmap generated from clustered incidents showing potential risk zones.*
 
