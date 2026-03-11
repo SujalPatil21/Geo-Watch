@@ -1,0 +1,26 @@
+name: geowatch_frontend
+description: "GeoWatch - Crowd Safety Intelligence mobile app."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  provider: ^6.1.2
+  dio: ^5.9.0
+  geolocator: ^13.0.4
+  permission_handler: ^11.4.0
+  connectivity_plus: ^5.0.2
+  shared_preferences: ^2.5.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
