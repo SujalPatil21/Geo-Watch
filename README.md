@@ -71,7 +71,7 @@ GeoWatch aggregates these reports and applies **geospatial clustering** to detec
 
 ### Event Creation Page
 
-![Event Creation](img2.jpg)
+![Event Creation](img2.png)
 
 *Figure 2: Admin interface used to create and configure a new event with location and event details.*
 
@@ -79,7 +79,7 @@ GeoWatch aggregates these reports and applies **geospatial clustering** to detec
 
 ### Event Map (Initial State)
 
-![Empty Event Map](img3.jpg)
+![Empty Event Map](img3.png)
 
 *Figure 3: Admin dashboard displaying the event map before any incidents are reported.*
 
