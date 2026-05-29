@@ -260,7 +260,9 @@ useEffect(() => {
   return () => {
     try {
       client.disconnect(() => {})
-    } catch {}
+    } catch (error) {
+      console.error('WebSocket disconnect error', error)
+    }
   }
 
 }, [eventId])
