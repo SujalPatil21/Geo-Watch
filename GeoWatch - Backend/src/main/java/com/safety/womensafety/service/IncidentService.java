@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.*;
 
 @Service
 @RequiredArgsConstructor
@@ -23,12 +24,19 @@ public class IncidentService {
     private final IncidentRepository incidentRepository;
     private final ClusteringService clusteringService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final MetricsService metricsService;
+
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private final ConcurrentHashMap<Long, ScheduledFuture<?>> pendingTasks = new ConcurrentHashMap<>();
 
     // Return incident ID instead of String
     public Long submitIncident(CreateIncidentRequest request) {
 
         // Fetch event
+        long startEvent = System.nanoTime();
         Optional<Event> optionalEvent = eventRepository.findById(request.getEventId());
+        long dbEventTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startEvent);
+        metricsService.recordDbQuery("EventLookupQuery", dbEventTime);
 
         if (optionalEvent.isEmpty()) {
             throw new RuntimeException("Event not found");
@@ -60,11 +68,14 @@ public class IncidentService {
         // -----------------------------
         LocalDateTime rateLimitWindow = LocalDateTime.now().minusMinutes(5);
 
+        long startRate = System.nanoTime();
         List<Incident> recentReports =
                 incidentRepository.findByPhoneNumberAndTimestampAfter(
                         request.getPhoneNumber(),
                         rateLimitWindow
                 );
+        long dbRateTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startRate);
+        metricsService.recordDbQuery("RateLimiterQuery", dbRateTime);
 
         if (recentReports.size() >= 3) {
             throw new RuntimeException("Too many incident reports. Please wait before reporting again.");
@@ -81,27 +92,10 @@ public class IncidentService {
 
         // Save incident and capture saved entity
         Incident savedIncident = incidentRepository.save(incident);
+        metricsService.recordIncidentProcessed();
 
-        // -----------------------------
-        // CLUSTERING WINDOW (15 minutes)
-        // -----------------------------
-        LocalDateTime clusteringWindow = LocalDateTime.now().minusMinutes(15);
-
-        List<Incident> recentIncidents =
-                incidentRepository.findByEventIdAndTimestampAfterAndResolvedFalse(
-                        request.getEventId(),
-                        clusteringWindow
-                );
-
-        System.out.println("Incidents fetched for clustering: " + recentIncidents.size());
-
-        List<ClusterResponse> clusters =
-                clusteringService.performClustering(recentIncidents);
-
-        System.out.println("Clusters created: " + clusters);
-
-        // Broadcast cluster updates
-        messagingTemplate.convertAndSend("/topic/risk-updates", clusters);
+        // Trigger background calculation and broadcast
+        triggerClusteringAndBroadcast(request.getEventId());
 
         // Return the incident ID to Flutter
         return savedIncident.getId();
@@ -117,20 +111,53 @@ public class IncidentService {
 
         incidentRepository.save(incident);
 
-        // Recalculate clusters
+        // Trigger background calculation and broadcast
+        triggerClusteringAndBroadcast(incident.getEventId());
+
+        return "Incident resolved successfully";
+    }
+
+    public void triggerClusteringAndBroadcast(Long eventId) {
+        pendingTasks.compute(eventId, (key, existingTask) -> {
+            if (existingTask != null && !existingTask.isDone()) {
+                return existingTask;
+            }
+            return scheduler.schedule(() -> {
+                try {
+                    runClusteringAndBroadcast(eventId);
+                } finally {
+                    pendingTasks.remove(eventId);
+                }
+            }, 100, TimeUnit.MILLISECONDS);
+        });
+    }
+
+    private void runClusteringAndBroadcast(Long eventId) {
         LocalDateTime clusteringWindow = LocalDateTime.now().minusMinutes(15);
 
+        long startIncident = System.nanoTime();
         List<Incident> recentIncidents =
                 incidentRepository.findByEventIdAndTimestampAfterAndResolvedFalse(
-                        incident.getEventId(),
+                        eventId,
                         clusteringWindow
                 );
+        long dbIncidentTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startIncident);
+        metricsService.recordDbQuery("IncidentQuery", dbIncidentTime);
 
+        long startDbscan = System.nanoTime();
         List<ClusterResponse> clusters =
                 clusteringService.performClustering(recentIncidents);
+        long dbscanTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startDbscan);
+        metricsService.recordDbscanExecution(dbscanTime, recentIncidents.size(), clusters.size());
 
-        messagingTemplate.convertAndSend("/topic/risk-updates", clusters);
-        System.out.println("Broadcasting clusters to websocket: " + clusters);
-        return "Incident resolved successfully";
+        long startWs = System.nanoTime();
+        messagingTemplate.convertAndSend("/topic/risk-updates/" + eventId, clusters);
+        long wsTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startWs);
+        metricsService.recordWebSocketBroadcast(wsTime);
+    }
+
+    @jakarta.annotation.PreDestroy
+    public void shutdown() {
+        scheduler.shutdown();
     }
 }

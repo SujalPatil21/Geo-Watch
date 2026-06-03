@@ -6,6 +6,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
+@Table(name = "event", indexes = {
+    @Index(name = "idx_event_active_times", columnList = "end_time, start_time"),
+    @Index(name = "idx_event_admin_endtime", columnList = "admin_id, end_time")
+})
 @Getter
 @Setter
 @NoArgsConstructor

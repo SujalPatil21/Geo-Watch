@@ -5,6 +5,10 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "incident", indexes = {
+    @Index(name = "idx_incident_event_resolved_timestamp", columnList = "event_id, resolved, timestamp"),
+    @Index(name = "idx_incident_phone_timestamp", columnList = "phone_number, timestamp")
+})
 @Getter
 @Setter
 @NoArgsConstructor

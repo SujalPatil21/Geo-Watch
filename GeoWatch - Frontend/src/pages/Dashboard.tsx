@@ -244,7 +244,7 @@ useEffect(() => {
 
   client.connect({}, () => {
 
-    client.subscribe("/topic/risk-updates", (message) => {
+    client.subscribe(`/topic/risk-updates/${eventId}`, (message) => {
 
       try {
         const payload = JSON.parse(message.body)

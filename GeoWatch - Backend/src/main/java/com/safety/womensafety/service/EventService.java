@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +27,7 @@ public class EventService {
 
     private final AdminRepository adminRepository;
     private final EventRepository eventRepository;
+    private final MetricsService metricsService;
 
     // ----------------------------
     // CREATE EVENT
@@ -87,8 +90,11 @@ public class EventService {
 
         LocalDateTime now = LocalDateTime.now();
 
+        long startDb = System.nanoTime();
         List<Event> activeEvents =
                 eventRepository.findByStartTimeBeforeAndEndTimeAfter(now, now);
+        long elapsed = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startDb);
+        metricsService.recordDbQuery("EventLookupQuery", elapsed);
 
         List<NearbyEventResponse> responseList = new ArrayList<>();
 
@@ -142,8 +148,12 @@ public class EventService {
     // ----------------------------
     public EventDetailsResponse getEventDetails(Long eventId) {
 
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new RuntimeException("Event not found"));
+        long startDb = System.nanoTime();
+        Optional<Event> optionalEvent = eventRepository.findById(eventId);
+        long elapsed = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startDb);
+        metricsService.recordDbQuery("EventLookupQuery", elapsed);
+
+        Event event = optionalEvent.orElseThrow(() -> new RuntimeException("Event not found"));
 
         List<OrganizerDTO> organizers = new ArrayList<>();
 
@@ -180,7 +190,10 @@ public class EventService {
 
         LocalDateTime now = LocalDateTime.now();
 
+        long startDb = System.nanoTime();
         List<Event> events = eventRepository.findByAdmin_IdAndEndTimeAfter(adminId, now);
+        long elapsed = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startDb);
+        metricsService.recordDbQuery("EventLookupQuery", elapsed);
 
         List<EventDetailsResponse> response = new ArrayList<>();
 
