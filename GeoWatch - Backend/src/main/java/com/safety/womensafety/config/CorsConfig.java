@@ -19,9 +19,15 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
+<<<<<<< HEAD
                         .allowedOrigins(allowedOrigins)
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("Authorization", "Content-Type", "Accept", "Origin")
+=======
+                        .allowedOrigins("https://geo-watch.pages.dev")
+                        .allowedMethods("*")
+                        .allowedHeaders("*")
+>>>>>>> 8cb4e1ff7b3f8169edefcf544416428bac633843
                         .allowCredentials(true);
             }
         };

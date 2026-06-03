@@ -114,7 +114,7 @@ function Home() {
           Users can download the Android mobile app to report incidents instantly during events and help build real-time crowd safety awareness.
         </p>
         <a
-          href="#"
+          href="https://github.com/NihalMishra3009/Geo-Watch/releases/latest/download/GeoWatch-latest.apk"
           className="mt-6 inline-block rounded-lg bg-emerald-600 px-8 py-4 text-base font-semibold text-white transition hover:bg-emerald-500"
         >
           Download APK
