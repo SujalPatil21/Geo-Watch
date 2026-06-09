@@ -380,6 +380,6 @@ graph TD
 ## 15. Conclusion
 
 Based on empirical testing, the GeoWatch codebase demonstrates strong scalability characteristics:
-* **As a Senior Software Engineer**, the implementation of custom geospatial partitioning and debounced background scheduling shows attention to CPU efficiency and concurrency management.
-* **As a Systems Design Interviewer**, the database indexes and query optimization show solid fundamentals, though horizontal scaling will require transitioning from the in-memory WebSocket broker to a distributed message backplane.
+*  The implementation of custom geospatial partitioning and debounced background scheduling shows attention to CPU efficiency and concurrency management.
+*  The database indexes and query optimization show solid fundamentals, though horizontal scaling will require transitioning from the in-memory WebSocket broker to a distributed message backplane.
 * **Verdict**: The benchmark data confirms that the GeoWatch platform is highly stable under concurrent loads, meeting its design objectives for real-time crowd safety monitoring.
