@@ -1,0 +1,41 @@
+name: Build Release APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.41.4'
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: GeoWatch - Application
+
+      - name: Build APK
+        run: flutter build apk --release --dart-define=API_BASE_URL=https://geo-watch-production-c873.up.railway.app
+        working-directory: GeoWatch - Application
+        env:
+          API_BASE_URL: https://geo-watch-production-c873.up.railway.app
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apk
+          path: GeoWatch - Application/build/app/outputs/flutter-apk/app-release.apk
