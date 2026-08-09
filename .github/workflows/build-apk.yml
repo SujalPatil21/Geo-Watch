@@ -34,8 +34,11 @@ jobs:
         env:
           API_BASE_URL: https://geo-watch-production-c873.up.railway.app
 
+      - name: Rename APK
+        run: mv "GeoWatch - Application/build/app/outputs/flutter-apk/app-release.apk" "GeoWatch.apk"
+
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: release-apk
-          path: GeoWatch - Application/build/app/outputs/flutter-apk/app-release.apk
+          name: GeoWatch
+          path: GeoWatch.apk
