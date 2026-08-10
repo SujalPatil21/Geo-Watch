@@ -172,3 +172,13 @@ By converting scattered reports into **live geospatial risk intelligence**, GeoW
 ## What GeoWatch Achieves
 
 GeoWatch converts scattered incident reports into **real-time geospatial risk intelligence**, helping event organizers detect danger zones early and improve crowd safety response.
+
+---
+## Authors
+
+- Shreya Awari – [Github](https://github.com/shreyaawari28)  
+- Sujal Patil – [Github](https://github.com/SujalPatil21)  
+- Tejas Halvankar – [Github](https://github.com/Tejas-H01)  
+- Nihal Mishra – [Github](https://github.com/NihalMishra3009)  
+
+---
