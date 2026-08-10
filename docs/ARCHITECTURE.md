@@ -35,25 +35,6 @@ The following diagram illustrates the internal processing pipeline and data flow
 
 ![GeoWatch Processing & Data Flow](assets/geowatch-processing-data-flow.png)
 
-### SDE Interview Walkthrough (2-3 Minute Pitch)
-If explaining this system in an interview, you can summarize the processing flow as follows:
-
-1. **Ingestion**: The user reports an alert from the **Flutter mobile client**, which fires a JSON payload via `POST /api/incidents` to the backend.
-2. **Controller Routing**: The request hits the Spring Boot **`IncidentController`** which validates model constraints (such as non-null coordinates).
-3. **Core Orchestration**: The request delegates to **`IncidentService`**, which triggers three verification steps:
-   * **Event Lookup**: Loads the event parameters from PostgreSQL via **`EventRepository`**.
-   * **Geofence Check**: Uses the **Haversine formula** (`GeoUtil.calculateDistance`) to verify the coordinate is within the event's circular geofence boundary (plus a 30m tolerance).
-   * **Rate Limiting**: Queries **`IncidentRepository`** to ensure the phone number hasn't submitted $\ge 3$ reports within the past 5 minutes.
-4. **Persistence**: If valid, a new incident record is written to PostgreSQL (with `resolved = false` and server timestamp). The client receives a fast `200 OK` return with the generated incident ID.
-5. **Debounce Optimization**: Instead of calculating clusters synchronously, `IncidentService` schedules a background task with a **100ms debounce delay** using a `ScheduledExecutorService` to protect system resources from write spikes.
-6. **Query & Filter**: The scheduler triggers a database load of unresolved incidents reported within a **15-minute moving window** (`findByEventIdAndTimestampAfterAndResolvedFalse`).
-7. **Spatial Clustering**: The service delegates to **`DbscanClusteringService`**, which builds a custom **Spatial Grid Index** (optimizing neighboring bucket queries with a ಬೆಂಗಳೂರು/Bangalore latitude approximation) to run the DBSCAN clustering algorithm under $O(N)$ lookup efficiency.
-8. **Risk Classification**: Clusters are classified dynamically based on incident density: **LOW** (1-2 incidents), **MEDIUM** (3-5 incidents), or **HIGH** (6+ incidents).
-9. **Live Update Broadcast**: Calculated cluster metrics are pushed via **SockJS/STOMP WebSockets** to the `/topic/risk-updates/{eventId}` broker channel.
-10. **Visualization**: Connected **React monitoring dashboards** receive the JSON payload, update internal state, and immediately redraw **Leaflet map** layers and **Leaflet.heat** hotspot overlays.
-
----
-
 ### Editable Processing Pipeline
 
 The following Mermaid diagram provides an editable representation of the GeoWatch processing pipeline shown above.
