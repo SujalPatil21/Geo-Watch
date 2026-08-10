@@ -73,7 +73,6 @@ graph TD
         Mobile["Flutter Mobile App"]:::client
         ReactDash["React Web Dashboard"]:::client
         Leaflet["Leaflet / Heatmap Visualization"]:::client
-        ReactDash --> Leaflet
     end
 
     subgraph IngestionLayer [API & Core Ingestion]
@@ -81,7 +80,6 @@ graph TD
         REST["GeoWatch REST API"]:::api
         Ctrl["IncidentController"]:::controller
         Svc["IncidentService"]:::service
-        REST --> Ctrl --> Svc
     end
 
     subgraph ValidationLayer [Validation & Domain Logic]
@@ -95,7 +93,6 @@ graph TD
         direction LR
         Repo["IncidentRepository"]:::db
         Postgres[("PostgreSQL Database")]:::db
-        Repo --> Postgres
     end
 
     subgraph AsyncLayer [Async Processing]
@@ -103,7 +100,6 @@ graph TD
         Scheduler["100ms Debounce Scheduler"]:::service
         Exec["ScheduledExecutorService"]:::service
         Batch["Batched Data"]:::service
-        Scheduler --> Exec --> Batch
     end
 
     subgraph SpatialLayer [Spatial Analytics & Risk Engine]
@@ -111,18 +107,26 @@ graph TD
         DBSCAN["DbscanClusteringService"]:::logic
         Grid["2D Spatial Grid Index"]:::logic
         Risk["Risk Classification<br/>LOW / MEDIUM / HIGH"]:::logic
-        DBSCAN -.-> Grid
-        DBSCAN --> Risk
     end
 
     subgraph BroadcastLayer [Broadcast Layer]
         direction LR
         Broadcast["Broadcast Layer"]:::broker
         SockJS["SockJS + STOMP Broker"]:::broker
-        Broadcast --> SockJS
     end
 
+    %% Layout rank hints to keep subgraphs in top-to-bottom sequence (invisible links)
+    ClientLayer ~~~ IngestionLayer
+    IngestionLayer ~~~ ValidationLayer
+    ValidationLayer ~~~ PersistenceLayer
+    PersistenceLayer ~~~ AsyncLayer
+    AsyncLayer ~~~ SpatialLayer
+    SpatialLayer ~~~ BroadcastLayer
+
+    %% Ingestion flow
     Mobile --> REST
+    REST --> Ctrl
+    Ctrl --> Svc
     
     %% Domain validation checks associated with IncidentService
     Svc -.-> EvtVer
@@ -131,14 +135,23 @@ graph TD
     
     %% Service persists data to Repository after validation
     Svc --> Repo
+    Repo --> Postgres
     
     %% Async scheduling path
     Repo -->|persisted incident flow| Scheduler
+    Scheduler --> Exec
+    Exec -->|100ms debounce| Batch
     Batch --> DBSCAN
+    
+    %% Spatial Index grid is a supporting utility to clustering, not a sequential stage
+    DBSCAN -.-> Grid
+    DBSCAN --> Risk
     
     %% Broadcast updates flow
     Risk --> Broadcast
+    Broadcast --> SockJS
     SockJS -->|WebSockets| ReactDash
+    ReactDash --> Leaflet
 ```
 
 ---
