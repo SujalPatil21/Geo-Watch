@@ -1,0 +1,122 @@
+# ==========================================
+# GeoWatch Root .gitignore Configuration
+# ==========================================
+
+# ------------------------------------------
+# Java / Spring Boot (Maven)
+# ------------------------------------------
+**/target/
+**/*.class
+**/*.jar
+**/*.war
+**/*.ear
+**/*.nar
+**/logs/
+**/*.log
+**/application-local.properties
+**/application-dev.properties
+**/application-secrets.properties
+
+# ------------------------------------------
+# Dart / Flutter
+# ------------------------------------------
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.packages
+**/.pub-cache/
+**/build/
+**/*.dart.js.deps
+**/*.dart.js.tar.gz
+**/*.dart.js
+**/*.js.deps
+**/*.js.map
+
+# ------------------------------------------
+# Android (Flutter Application Native Build)
+# ------------------------------------------
+**/.gradle/
+**/local.properties
+**/captures/
+**/*.apk
+**/*.ap_
+**/*.aab
+**/*.dex
+**/*.class
+**/android/app/build/
+**/android/local.properties
+**/android/key.properties
+**/*.keystore
+**/*.jks
+
+# ------------------------------------------
+# React / Node / Vite / JavaScript
+# ------------------------------------------
+**/node_modules/
+**/dist/
+**/.vite/
+**/coverage/
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+**/pnpm-debug.log*
+**/.eslintcache
+
+# ------------------------------------------
+# Environments, Configs, and Secrets
+# ------------------------------------------
+**/.env
+**/.env.*
+**/*.env
+# Allow example configurations
+!**/.env.example
+!**/*.env.example
+
+# ------------------------------------------
+# IDE / Text Editors
+# ------------------------------------------
+# IntelliJ
+**/.idea/
+**/*.iml
+**/*.ipr
+**/*.iws
+
+# VS Code
+**/.vscode/*
+!**/.vscode/settings.json
+!**/.vscode/tasks.json
+!**/.vscode/launch.json
+!**/.vscode/extensions.json
+
+# Eclipse & NetBeans
+**/.metadata/
+**/*.tmp
+**/*.bak
+**/*.swp
+**/*~.nib
+**/local.properties
+**/.settings/
+**/.project
+**/.classpath
+
+# ------------------------------------------
+# Operating Systems
+# ------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ------------------------------------------
+# General Temporary and Cached Files
+# ------------------------------------------
+**/*.tmp
+**/*.temp
+**/*.swp
+**/*.swo
+**/*~
+**/tmp/
