@@ -54,78 +54,88 @@ If explaining this system in an interview, you can summarize the processing flow
 
 ---
 
-### Editable Processing Pipeline (Mermaid Source Code)
+### Editable Processing Pipeline
 
-For developers wanting to inspect or edit the pipeline sequence, the original Mermaid source block is preserved below:
+The following Mermaid diagram provides an editable representation of the GeoWatch processing pipeline shown above.
 
 ```mermaid
 graph TD
     classDef client fill:#3b82f6,stroke:#1d4ed8,color:#fff,stroke-width:2px;
-    classDef controller fill:#10b981,stroke:#047857,color:#fff,stroke-width:2px;
-    classDef service fill:#f59e0b,stroke:#d97706,color:#fff,stroke-width:2px;
-    classDef db fill:#8b5cf6,stroke:#6d28d9,color:#fff,stroke-width:2px;
+    classDef api fill:#10b981,stroke:#047857,color:#fff,stroke-width:2px;
+    classDef controller fill:#f59e0b,stroke:#d97706,color:#fff,stroke-width:2px;
+    classDef service fill:#8b5cf6,stroke:#6d28d9,color:#fff,stroke-width:2px;
     classDef logic fill:#ec4899,stroke:#be185d,color:#fff,stroke-width:2px;
+    classDef db fill:#6b7280,stroke:#374151,color:#fff,stroke-width:2px;
     classDef broker fill:#f43f5e,stroke:#e11d48,color:#fff,stroke-width:2px;
 
-    subgraph Client Layer [Client Layer]
-        Mobile[Flutter Mobile App]:::client
-        ReactDash[React Admin Dashboard]:::client
+    subgraph ClientLayer [Client Layer]
+        Mobile["Flutter Mobile App"]:::client
+        ReactDash["React Web Dashboard"]:::client
+        Leaflet["Leaflet / Heatmap Visualization"]:::client
     end
 
-    subgraph Backend Ingestion [Backend Ingestion]
-        IncCtrl[IncidentController]:::controller
-        IncSvc[IncidentService]:::service
+    subgraph IngestionLayer [API & Core Ingestion]
+        REST["GeoWatch REST API"]:::api
+        Ctrl["IncidentController"]:::controller
+        Svc["IncidentService"]:::service
     end
 
-    subgraph Domain Logic & Algorithms [Domain Logic & Algorithms]
-        GeoCalc[Haversine Calculation<br/>GeoUtil.calculateDistance]:::logic
-        Geofence[Geofencing Validation]:::logic
-        RateLimit[Rate Limiting Checks]:::logic
-        DBSCAN[DBSCAN Clustering<br/>DbscanClusteringService]:::logic
-        RiskClass[Risk Classification<br/>LOW, MEDIUM, HIGH]:::logic
+    subgraph ValidationLayer [Validation & Domain Logic]
+        EvtVer["Event Verification"]:::logic
+        Geofence["Haversine Distance & Geofencing"]:::logic
+        RateLim["Rate Limiting"]:::logic
     end
 
-    subgraph Persistence Layer [Persistence Layer]
-        EvtRepo[EventRepository]:::db
-        IncRepo[IncidentRepository]:::db
-        DB[(PostgreSQL Database)]:::db
+    subgraph PersistenceLayer [Persistence Layer]
+        Repo["IncidentRepository"]:::db
+        Postgres[("PostgreSQL Database")]:::db
     end
 
-    subgraph Broadcast Layer [Real-Time Messaging]
-        Broker[STOMP Broker / WebSockets]:::broker
+    subgraph AsyncLayer [Async Processing]
+        Scheduler["100ms Debounce Scheduler"]:::service
+        Exec["ScheduledExecutorService"]:::service
+        Batch["Batched Data"]:::service
     end
 
-    %% Ingestion path
-    Mobile -->|1. Submit Incident: POST /api/incidents| IncCtrl
-    IncCtrl -->|2. Delegate call| IncSvc
+    subgraph SpatialLayer [Spatial Analytics & Risk Engine]
+        DBSCAN["DbscanClusteringService"]:::logic
+        Grid["2D Spatial Grid Index"]:::logic
+        Risk["Risk Classification<br/>LOW / MEDIUM / HIGH"]:::logic
+    end
 
-    %% Verification & Geofence
-    IncSvc -->|3. Fetch Event Metadata| EvtRepo
-    EvtRepo -->|4. JDBC Query| DB
-    IncSvc -->|5. Coordinate Distance| GeoCalc
-    GeoCalc -->|6. Boundary Check| Geofence
+    subgraph BroadcastLayer [Broadcast Layer]
+        Broadcast["Broadcast Layer"]:::broker
+        SockJS["SockJS + STOMP Broker"]:::broker
+    end
 
-    %% Rate limiting
-    IncSvc -->|7. Check Caller Rate| RateLimit
-    RateLimit -->|8. Fetch Recent Reports| IncRepo
-    IncRepo -->|9. JDBC Query| DB
-
-    %% Persistence
-    IncSvc -->|10. Store Raw Incident| IncRepo
-    IncRepo -->|11. SQL INSERT| DB
-    IncSvc -.->|12. Return Incident ID| Mobile
-
-    %% Processing Pipeline
-    IncSvc -->|13. Scheduled Event (100ms Debounce)| IncSvc
-    IncSvc -->|14. Fetch Event Incidents (15m window)| IncRepo
-    IncRepo -->|15. SQL SELECT| DB
-    IncSvc -->|16. Cluster Grouping| DBSCAN
-    DBSCAN -->|17. Cluster Size Analysis| RiskClass
-
-    %% Real-time updates
-    IncSvc -->|18. Broadcast Cluster DTOs| Broker
-    Broker -->|19. STOMP websocket frames| ReactDash
-    ReactDash -->|20. Redraw Heatmaps / Leaflet Map| ReactDash
+    Mobile --> REST
+    REST --> Ctrl
+    Ctrl --> Svc
+    
+    %% Domain validation checks associated with IncidentService
+    Svc -.-> EvtVer
+    Svc -.-> Geofence
+    Svc -.-> RateLim
+    
+    %% Service persists data to Repository after validation
+    Svc --> Repo
+    Repo --> Postgres
+    
+    %% Async scheduling path
+    Repo -->|persisted incident flow| Scheduler
+    Scheduler --> Exec
+    Exec -->|100ms debounce| Batch
+    Batch --> DBSCAN
+    
+    %% Spatial Index grid is a supporting utility to clustering, not a sequential stage
+    DBSCAN -.-> Grid
+    DBSCAN --> Risk
+    
+    %% Broadcast updates flow
+    Risk --> Broadcast
+    Broadcast --> SockJS
+    SockJS -->|WebSockets| ReactDash
+    ReactDash --> Leaflet
 ```
 
 ---
