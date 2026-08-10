@@ -181,4 +181,3 @@ GeoWatch converts scattered incident reports into **real-time geospatial risk in
 - Tejas Halvankar – [Github](https://github.com/Tejas-H01)  
 - Nihal Mishra – [Github](https://github.com/NihalMishra3009)  
 
----
