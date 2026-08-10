@@ -68,60 +68,44 @@ graph TD
     classDef db fill:#6b7280,stroke:#374151,color:#fff,stroke-width:2px;
     classDef broker fill:#f43f5e,stroke:#e11d48,color:#fff,stroke-width:2px;
 
-    subgraph ClientLayer [Client Layer]
-        direction LR
-        Mobile["Flutter Mobile App"]:::client
-        ReactDash["React Web Dashboard"]:::client
-        Leaflet["Leaflet / Heatmap Visualization"]:::client
-    end
+    Mobile["Flutter Mobile App"]:::client
 
     subgraph IngestionLayer [API & Core Ingestion]
-        direction LR
         REST["GeoWatch REST API"]:::api
         Ctrl["IncidentController"]:::controller
         Svc["IncidentService"]:::service
     end
 
     subgraph ValidationLayer [Validation & Domain Logic]
-        direction LR
         EvtVer["Event Verification"]:::logic
         Geofence["Haversine Distance & Geofencing"]:::logic
         RateLim["Rate Limiting"]:::logic
     end
 
     subgraph PersistenceLayer [Persistence Layer]
-        direction LR
         Repo["IncidentRepository"]:::db
         Postgres[("PostgreSQL Database")]:::db
     end
 
     subgraph AsyncLayer [Async Processing]
-        direction LR
         Scheduler["100ms Debounce Scheduler"]:::service
         Exec["ScheduledExecutorService"]:::service
         Batch["Batched Data"]:::service
     end
 
     subgraph SpatialLayer [Spatial Analytics & Risk Engine]
-        direction LR
         DBSCAN["DbscanClusteringService"]:::logic
         Grid["2D Spatial Grid Index"]:::logic
         Risk["Risk Classification<br/>LOW / MEDIUM / HIGH"]:::logic
     end
 
     subgraph BroadcastLayer [Broadcast Layer]
-        direction LR
         Broadcast["Broadcast Layer"]:::broker
         SockJS["SockJS + STOMP Broker"]:::broker
     end
 
-    %% Layout rank hints to keep subgraphs in top-to-bottom sequence (invisible links)
-    ClientLayer ~~~ IngestionLayer
-    IngestionLayer ~~~ ValidationLayer
-    ValidationLayer ~~~ PersistenceLayer
-    PersistenceLayer ~~~ AsyncLayer
-    AsyncLayer ~~~ SpatialLayer
-    SpatialLayer ~~~ BroadcastLayer
+    ReactDash["React Web Dashboard"]:::client
+    Leaflet["Leaflet / Heatmap Visualization"]:::client
 
     %% Ingestion flow
     Mobile --> REST
