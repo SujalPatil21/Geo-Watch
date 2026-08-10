@@ -74,6 +74,14 @@ GeoWatch aggregates these reports and applies **geospatial clustering** to detec
 | **Database** | PostgreSQL storing events, incidents, organizers, and admins |
 | **Realtime Engine** | WebSocket + STOMP broadcasting cluster updates |
 
+## Architecture
+
+GeoWatch uses a layered architecture consisting of a Flutter mobile client, Spring Boot backend, PostgreSQL persistence, asynchronous spatial processing, and a React-based real-time dashboard.
+
+For the complete system and processing architecture diagrams:
+
+[View the Architecture Documentation](docs/ARCHITECTURE.md)
+
 ---
 
 ## How the System Works
@@ -91,7 +99,7 @@ GeoWatch aggregates these reports and applies **geospatial clustering** to detec
 
 ### Home Page
 
-![Home Page](img1.jpeg)
+![Home Page](docs/assets/img1.jpeg)
 
 *Figure 1: GeoWatch home page where users can view available events and access the reporting interface.*
 
@@ -99,7 +107,7 @@ GeoWatch aggregates these reports and applies **geospatial clustering** to detec
 
 ### Event Creation Page
 
-![Event Creation](img2.png)
+![Event Creation](docs/assets/img2.png)
 
 *Figure 2: Admin interface used to create and configure a new event with location and event details.*
 
@@ -107,7 +115,7 @@ GeoWatch aggregates these reports and applies **geospatial clustering** to detec
 
 ### Event Map (Initial State)
 
-![Empty Event Map](img3.png)
+![Empty Event Map](docs/assets/img3.png)
 
 *Figure 3: Admin dashboard displaying the event map before any incidents are reported.*
 
@@ -115,7 +123,7 @@ GeoWatch aggregates these reports and applies **geospatial clustering** to detec
 
 ### Heatmap Visualization
 
-![Heatmap Display](img4.png)
+![Heatmap Display](docs/assets/img4.png)
 
 *Figure 4: Real-time heatmap generated from clustered incidents showing potential risk zones.*
 

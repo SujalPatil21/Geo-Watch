@@ -348,31 +348,31 @@ graph TD
 ## 14. Proof Collection Placeholders
 
 ### 1. k6 Benchmark Output
-![k6 REST API Load Test Results](file:///c:/Github/Geo-Watch/img1.jpeg)
+![k6 REST API Load Test Results](../../docs/assets/img1.jpeg)
 *Caption: k6 output showing successful execution at 250 VUs, demonstrating a throughput of 732.99 req/sec and 0% HTTP failures.*
 
 ### 2. WebSocket Benchmark Output
-![WebSocket Connection Latency Benchmark](file:///c:/Github/Geo-Watch/img2.png)
+![WebSocket Connection Latency Benchmark](../../docs/assets/img2.png)
 *Caption: Terminal output from the custom WebSocket load test showing successful connection and delivery to 500 clients with a client end-to-end latency of 1,005.73 ms.*
 
 ### 3. Railway Deployment
-![Railway Backend Ingest Status](file:///c:/Github/Geo-Watch/img3.png)
+![Railway Backend Ingest Status](../../docs/assets/img3.png)
 *Caption: Railway console metrics showing memory and CPU usage during peak load testing.*
 
 ### 4. Cloudflare Deployment
-![Cloudflare Edge Deployment Panel](file:///c:/Github/Geo-Watch/img4.png)
+![Cloudflare Edge Deployment Panel](../../docs/assets/img4.png)
 *Caption: Cloudflare Pages dashboard showing deployments and CDN request statistics.*
 
 ### 5. Admin Dashboard
-![React Admin Map Dashboard](file:///c:/Github/Geo-Watch/img2.png)
+![React Admin Map Dashboard](../../docs/assets/img2.png)
 *Caption: Admin monitoring dashboard, displaying active risk zones and Leaflet overlays.*
 
 ### 6. Mobile Application
-![Flutter Mobile Application Client Interface](file:///c:/Github/Geo-Watch/img1.jpeg)
+![Flutter Mobile Application Client Interface](../../docs/assets/img1.jpeg)
 *Caption: Flutter client interface used by mobile users to report incident locations.*
 
 ### 7. Risk Cluster Visualization
-![Leaflet Map Risk Cluster Bubbles](file:///c:/Github/Geo-Watch/img3.png)
+![Leaflet Map Risk Cluster Bubbles](../../docs/assets/img3.png)
 *Caption: Leaflet map rendering risk clusters color-coded by severity, showing danger zones in real time.*
 
 ---
