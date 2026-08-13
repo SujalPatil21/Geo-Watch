@@ -29,10 +29,10 @@ jobs:
         working-directory: GeoWatch - Application
 
       - name: Build APK
-        run: flutter build apk --release --dart-define=API_BASE_URL=https://geo-watch-production-c873.up.railway.app
+        run: flutter build apk --release --dart-define=API_BASE_URL=https://geowatch-old-production.up.railway.app
         working-directory: GeoWatch - Application
         env:
-          API_BASE_URL: https://geo-watch-production-c873.up.railway.app
+          API_BASE_URL: https://geowatch-old-production.up.railway.app
 
       - name: Rename APK
         run: mv "GeoWatch - Application/build/app/outputs/flutter-apk/app-release.apk" "GeoWatch.apk"
