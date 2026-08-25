@@ -6,6 +6,10 @@ const vus = 100;
 const rampUp = '30s';
 const duration = '90s';
 const targetEventId = 999;
+const apiBaseUrl = __ENV.API_BASE_URL;
+if (!apiBaseUrl) {
+  throw new Error("API_BASE_URL environment variable is required (e.g. k6 run -e API_BASE_URL=http://localhost:8082)");
+}
 
 export const options = {
   stages: [

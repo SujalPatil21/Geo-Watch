@@ -4,6 +4,7 @@ import type { LatLngExpression } from 'leaflet'
 import L from 'leaflet'
 import { Circle, MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet'
 import { useNavigate } from 'react-router-dom'
+import { Search, Locate } from 'lucide-react'
 import { createEvent } from '../services/api'
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
@@ -64,6 +65,63 @@ function CreateEvent() {
   const [centerLat, setCenterLat] = useState<number | null>(null)
   const [centerLng, setCenterLng] = useState<number | null>(null)
   const [radius, setRadius] = useState(500)
+
+  const [map, setMap] = useState<L.Map | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchError, setSearchError] = useState('')
+  const [searching, setSearching] = useState(false)
+  const [locating, setLocating] = useState(false)
+
+  const selectLocation = (lat: number, lng: number, flyTo: boolean = false) => {
+    setCenterLat(lat)
+    setCenterLng(lng)
+    if (flyTo && map) {
+      map.flyTo([lat, lng], 14)
+    }
+  }
+
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) return
+
+    setSearching(true)
+    setSearchError('')
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}`)
+      const data = await res.json()
+      if (data && data.length > 0) {
+        const lat = parseFloat(data[0].lat)
+        const lng = parseFloat(data[0].lon)
+        selectLocation(lat, lng, true)
+      } else {
+        setSearchError('Location not found.')
+      }
+    } catch (err) {
+      setSearchError('Network error while searching.')
+    } finally {
+      setSearching(false)
+    }
+  }
+
+  const locateMe = () => {
+    setLocating(true)
+    setSearchError('')
+    if (!navigator.geolocation) {
+      setSearchError('Geolocation is not supported by your browser.')
+      setLocating(false)
+      return
+    }
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        selectLocation(position.coords.latitude, position.coords.longitude, true)
+        setLocating(false)
+      },
+      (err) => {
+        setSearchError('Unable to retrieve your location.')
+        setLocating(false)
+      },
+      { timeout: 10000 }
+    )
+  }
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -144,20 +202,53 @@ function CreateEvent() {
 
           <div className="md:col-span-2">
             <label className="mb-1 block text-sm font-medium text-slate-200">
-              Event Location (Click on map)
+              Event Location
             </label>
-            <div className="overflow-hidden rounded-lg border border-slate-600">
-              <MapContainer center={indiaCenter} zoom={5} className="h-96 w-full">
+            
+            <div className="mb-3 flex gap-2">
+              <div className="relative flex-1">
+                <input
+                  type="text"
+                  placeholder="Search location..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      handleSearch()
+                    }
+                  }}
+                  className="w-full rounded-lg border border-slate-600 bg-slate-900 pl-10 pr-4 py-2 text-slate-100 outline-none transition focus:border-cyan-400"
+                />
+                <Search className="absolute left-3 top-2.5 h-5 w-5 text-slate-400" />
+              </div>
+              <button
+                type="button"
+                onClick={handleSearch}
+                disabled={searching}
+                className="rounded-lg bg-slate-700 px-4 py-2 font-semibold text-slate-100 transition hover:bg-slate-600 disabled:opacity-50"
+              >
+                {searching ? '...' : 'Search'}
+              </button>
+            </div>
+            {searchError && <p className="mb-2 text-sm text-rose-400">{searchError}</p>}
+
+            <div className="relative overflow-hidden rounded-lg border border-slate-600">
+              <button
+                type="button"
+                onClick={locateMe}
+                disabled={locating}
+                title="Locate Me"
+                className="absolute left-[10px] top-[80px] z-[400] flex h-8 w-8 items-center justify-center rounded border border-slate-600 bg-slate-800 text-cyan-400 shadow-sm transition hover:bg-slate-700 disabled:opacity-50"
+              >
+                <Locate className="h-4 w-4" />
+              </button>
+              <MapContainer center={indiaCenter} zoom={5} className="h-96 w-full" ref={setMap}>
                 <TileLayer
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                <LocationPicker
-                  onPick={(lat, lng) => {
-                    setCenterLat(lat)
-                    setCenterLng(lng)
-                  }}
-                />
+                <LocationPicker onPick={(lat, lng) => selectLocation(lat, lng, false)} />
                 {centerLat !== null && centerLng !== null && (
                   <>
                     <Marker position={[centerLat, centerLng]} icon={defaultMarkerIcon} />

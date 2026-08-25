@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>GeoWatch - Quick Revision Cheat Sheet</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      color: #1e293b;
+      background-color: #f8fafc;
+      line-height: 1.4;
+      font-size: 11px;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+
+    .page {
+      width: 210mm;
+      height: 297mm;
+      padding: 15mm 16mm;
+      background-color: #ffffff;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      page-break-after: always;
+    }
+
+    .page:last-child {
+      page-break-after: avoid;
+    }
+
+    /* Header */
+    header {
+      border-bottom: 2px solid #f1f5f9;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .header-left h1 {
+      font-size: 20px;
+      font-weight: 800;
+      color: #1e3a8a;
+      letter-spacing: -0.5px;
+    }
+
+    .header-left p {
+      font-size: 11px;
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    .page-num {
+      font-size: 10px;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+
+    /* Titles */
+    h2 {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1e3a8a;
+      text-transform: uppercase;
+      margin-top: 10px;
+      margin-bottom: 6px;
+      border-left: 3px solid #3b82f6;
+      padding-left: 8px;
+      letter-spacing: 0.3px;
+    }
+
+    /* Layout Grids */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .card {
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 8px 10px;
+      background-color: #f8fafc;
+    }
+
+    .card.highlight {
+      background-color: #eff6ff;
+      border-color: #bfdbfe;
+    }
+
+    .card h3 {
+      font-size: 11px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 4px;
+    }
+
+    /* Lists */
+    ul {
+      list-style-type: none;
+    }
+
+    li {
+      position: relative;
+      padding-left: 10px;
+      margin-bottom: 3px;
+    }
+
+    li::before {
+      content: "•";
+      color: #3b82f6;
+      font-weight: bold;
+      position: absolute;
+      left: 0;
+    }
+
+    /* Diagrams */
+    .flow-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #f1f5f9;
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      font-weight: 600;
+      font-size: 9.5px;
+    }
+
+    .flow-step {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      padding: 3px 6px;
+      border-radius: 4px;
+      color: #334155;
+    }
+
+    .flow-step.active {
+      background: #3b82f6;
+      color: #ffffff;
+      border-color: #2563eb;
+    }
+
+    .arrow {
+      color: #94a3b8;
+      font-weight: bold;
+    }
+
+    /* Simple Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 8px;
+    }
+
+    th,
+    td {
+      border: 1px solid #e2e8f0;
+      padding: 4px 8px;
+      text-align: left;
+      font-size: 10px;
+    }
+
+    th {
+      background-color: #f8fafc;
+      color: #1e3a8a;
+      font-weight: 700;
+    }
+
+    .accent-text {
+      color: #2563eb;
+      font-weight: 600;
+    }
+
+    .code-term {
+      font-family: 'JetBrains Mono', monospace;
+      background-color: #f1f5f9;
+      padding: 1px 3px;
+      border-radius: 3px;
+      font-size: 9px;
+      color: #0f172a;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid #e2e8f0;
+      padding-top: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 9px;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+
+    /* Page 2 specifics */
+    .rapid-fire-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px 12px;
+      background-color: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 8px 10px;
+    }
+
+    .qa-box {
+      margin-bottom: 2px;
+    }
+
+    .q-text {
+      font-weight: 700;
+      color: #1e3a8a;
+      font-size: 9.5px;
+    }
+
+    .a-text {
+      color: #334155;
+      font-size: 9.5px;
+      display: block;
+      margin-top: 1px;
+    }
+
+    /* Metrics Hero */
+    .metrics-container {
+      display: flex;
+      justify-content: space-between;
+      background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+      color: white;
+      padding: 10px 16px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+
+    .metric-item {
+      text-align: center;
+    }
+
+    .metric-value {
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .metric-label {
+      font-size: 9px;
+      opacity: 0.9;
+      margin-top: 2px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ================= PAGE 1 ================= -->
+  <div class="page" id="page1">
+    <div>
+      <header>
+        <div class="header-left">
+          <h1>GeoWatch Interview Guide</h1>
+          <p>Simple Concept & Architecture Revision Sheet</p>
+        </div>
+        <span class="page-num">Page 1 of 2</span>
+      </header>
+
+      <!-- 1. WHAT IS GEOWATCH? -->
+      <section>
+        <h2>1. What is GeoWatch?</h2>
+        <div class="grid-2">
+          <div class="card">
+            <h3>The Core Problem</h3>
+            <p>During crowded events, emergency reports come from all over the area. Organizers get overwhelmed and
+              cannot easily spot the actual danger zones amidst isolated or false alarms.</p>
+            <p style="margin-top: 4px;"><strong>We need to answer:</strong> "Where are incidents clustering together
+              right now, and which zones are becoming safety hazards?"</p>
+          </div>
+          <div class="card highlight">
+            <h3>The Platform's Solution</h3>
+            <p>GeoWatch acts as a live coordinator:</p>
+            <p class="accent-text" style="margin: 4px 0;"><strong>Collects GPS incidents &rarr; Finds nearby groups
+                &rarr; Identifies risk zones &rarr; Updates a live map</strong></p>
+            <h3 style="margin-top: 6px; margin-bottom: 2px;">30-Second Interview Answer</h3>
+            <p><em>"GeoWatch is a real-time safety dashboard. It ingests geo-tagged incident reports from mobile users,
+                runs validation and rate limiting on the backend, and groups them into risk hotspots using an optimized
+                clustering algorithm. It then broadcasts these hotspots instantly over WebSockets to a live map
+                interface for event organizers."</em></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. MAIN TECHNOLOGIES -->
+      <section>
+        <h2>2. Main Technologies & Roles</h2>
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 25%;">Technology</th>
+              <th>What it does in GeoWatch</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Spring Boot</strong></td>
+              <td>Powers the backend REST APIs, coordinate validation, scheduling, and WebSocket messaging.</td>
+            </tr>
+            <tr>
+              <td><strong>PostgreSQL</strong></td>
+              <td>Stores all incident data persistently and safely.</td>
+            </tr>
+            <tr>
+              <td><strong>Hibernate / JPA</strong></td>
+              <td>Acts as the bridge to save and load Java objects directly into PostgreSQL tables.</td>
+            </tr>
+            <tr>
+              <td><strong>DBSCAN</strong></td>
+              <td>The spatial algorithm that finds groups of nearby incidents to create hazard hotspots.</td>
+            </tr>
+            <tr>
+              <td><strong>Grid Index</strong></td>
+              <td>A custom optimization that speeds up clustering by checking only nearby map cells.</td>
+            </tr>
+            <tr>
+              <td><strong>WebSockets (STOMP)</strong></td>
+              <td>Sends real-time updates directly to monitoring dashboards without forcing page reloads.</td>
+            </tr>
+            <tr>
+              <td><strong>React + Leaflet</strong></td>
+              <td>Powers the web dashboard and renders live coordinates onto an interactive map.</td>
+            </tr>
+            <tr>
+              <td><strong>k6</strong></td>
+              <td>A load-testing tool used to simulate high user activity and measure API performance.</td>
+            </tr>
+            <tr>
+              <td><strong>Railway & Cloudflare</strong></td>
+              <td>Railway hosts the backend container and DB. Cloudflare Pages hosts the static React website.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 3. HOW THE SYSTEM WORKS -->
+      <section>
+        <h2>3. How the System Works</h2>
+        <div class="flow-line">
+          <div class="flow-step">User reports incident</div>
+          <div class="arrow">&rarr;</div>
+          <div class="flow-step">Spring Boot API</div>
+          <div class="arrow">&rarr;</div>
+          <div class="flow-step">Validate & Save</div>
+          <div class="arrow">&rarr;</div>
+          <div class="flow-step">DBSCAN Groups points</div>
+          <div class="arrow">&rarr;</div>
+          <div class="flow-step">WebSocket updates map</div>
+        </div>
+        <div class="card">
+          <h3>The Core Concept in Simple Steps:</h3>
+          <ul>
+            <li><strong>Ingestion:</strong> A user reports a safety concern. The backend validates if the report falls
+              inside the event boundaries (geofencing) and rate-limits spam.</li>
+            <li><strong>Clustering:</strong> The server retrieves active incidents from the last 15 minutes, runs them
+              through the DBSCAN algorithm, and determines risk levels (Low, Medium, High).</li>
+            <li><strong>Push:</strong> The server broadcasts the resulting cluster coordinates instantly over
+              WebSockets. The dashboard receives it and re-renders hazard visual shapes.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 4. BACKEND — BASIC STRUCTURE -->
+      <section>
+        <h2>4. Backend Code Structure</h2>
+        <div class="grid-2">
+          <div class="card">
+            <h3>Standard Layered Architecture</h3>
+            <p>We separate concerns into logical layers:</p>
+            <p style="margin: 6px 0; font-weight: bold; text-align: center;">
+              Controller &rarr; Service &rarr; Repository &rarr; Entity
+            </p>
+            <ul>
+              <li><strong>Controller</strong> (<code class="code-term">IncidentController</code>): The entry gate.
+                Receives the incoming request, triggers checks, and sends back the incident ID.</li>
+              <li><strong>Service</strong> (<code class="code-term">IncidentService</code>): The logic brain. Handles
+                event timings, geofencing, rate limiting, and triggers DBSCAN.</li>
+              <li><strong>Repository</strong> (<code class="code-term">IncidentRepository</code>): Database messenger.
+                Asks PostgreSQL for matching incidents.</li>
+              <li><strong>Entity</strong> (<code class="code-term">Incident</code>): Defines how an incident is
+                structured inside the database.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>DTOs (Data Transfer Objects)</h3>
+            <p><strong>DTOs carry data across the API separately from the database tables.</strong> This isolates client
+              requests from database schema modifications.</p>
+            <ul style="margin-top: 4px;">
+              <li><strong>Client sending a report:</strong>
+                <br><span class="accent-text">JSON HTTP Payload &rarr; DTO (<code
+                    class="code-term">CreateIncidentRequest</code>) &rarr; Service &rarr; Entity &rarr; DB</span>
+              </li>
+              <li><strong>Server sending cluster information:</strong>
+                <br><span class="accent-text">Service Runs DBSCAN &rarr; DTO (<code
+                    class="code-term">ClusterResponse</code>) &rarr; JSON Broadcast</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer>
+      <span>GeoWatch Interview Cheat Sheet | Architecture & Concepts</span>
+      <span>Confidential &copy; 2026</span>
+    </footer>
+  </div>
+
+  <!-- ================= PAGE 2 ================= -->
+  <div class="page" id="page2">
+    <div>
+      <header>
+        <div class="header-left">
+          <h1>GeoWatch Technical Mechanics & Performance</h1>
+          <p>DBSCAN Optimization, WebSockets, Load Testing, and Deployment</p>
+        </div>
+        <span class="page-num">Page 2 of 2</span>
+      </header>
+
+      <!-- 5. DBSCAN — START FROM ZERO -->
+      <section>
+        <h2>5. DBSCAN Clustering: Concepts & Parameters</h2>
+        <div class="grid-2">
+          <div class="card">
+            <h3>What is DBSCAN?</h3>
+            <p>DBSCAN is a spatial algorithm that groups points close to each other. It finds natural clusters of any
+              shape and ignores isolated points as random noise.</p>
+            <ul style="margin-top: 4px;">
+              <li><strong>10 reports close together:</strong> Forms a hotspot cluster (Risk Zone).</li>
+              <li><strong>1 isolated report:</strong> Treated as noise and does not trigger an alarm.</li>
+              <li><strong>Why it fits:</strong> We do not need to guess the number of clusters beforehand.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Parameters and Code Settings</h3>
+            <p>The code (<code class="code-term">DbscanClusteringService.java</code>) defines two thresholds:</p>
+            <ul>
+              <li><strong>Epsilon (<code class="code-term">EPS = 50.0</code>):</strong> 50 meters. The maximum distance
+                between two incidents to count them as neighbors.</li>
+              <li><strong>MinPoints (<code class="code-term">MIN_PTS = 2</code>):</strong> At least 2 incidents must be
+                close to form a cluster. If fewer, they are treated as noise.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. WHY DID WE ADD THE GRID INDEX? -->
+      <section>
+        <h2>6. Spatial Optimization: The Grid Index</h2>
+        <div class="grid-2">
+          <div class="card">
+            <h3>The Performance Bottleneck</h3>
+            <p>Normally, finding neighbors requires comparing every incident with all other incidents on the map. This
+              represents <strong>$O(N^2)$ complexity</strong> which slows down exponentially during heavy reporting
+              load.</p>
+          </div>
+          <div class="card highlight">
+            <h3>Our Solution: 2D Spatial Grid</h3>
+            <p>We divide the map into 50m cells. Each incident is assigned to its cell. When searching for neighbors, we
+              check only the host cell and its 8 adjacent cells (3x3 grid) rather than the whole database. This yields
+              <strong>$O(N)$ efficiency</strong>.</p>
+            <p style="margin-top: 4px;"><strong>0.92 ms:</strong> The measured DBSCAN execution time on active in-memory
+              incidents in our benchmarks.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. WEBSOCKETS — SIMPLE EXPLANATION -->
+      <section>
+        <h2>7. Real-Time WebSockets & Broadcasting</h2>
+        <div class="grid-2">
+          <div class="card">
+            <h3>Why WebSockets over Polling?</h3>
+            <p><strong>REST Polling:</strong> The browser repeatedly asks "Any updates?" every few seconds, wasting
+              battery, database connections, and server bandwidth.</p>
+            <p style="margin-top: 4px;"><strong>WebSockets:</strong> Establish a single, persistent two-way channel. The
+              server pushes updates to the dashboard only when data actually changes.</p>
+          </div>
+          <div class="card">
+            <h3>STOMP Channels & Concurrency</h3>
+            <p><strong>STOMP</strong> organizes WebSocket streams into channels. The server broadcasts cluster updates
+              to the topic <code class="code-term">/topic/risk-updates/{eventId}</code>.</p>
+            <ul style="margin-top: 4px;">
+              <li><strong>500+ Concurrent Clients:</strong> The backend successfully handles 500+ long-lived connections
+                open simultaneously in JVM memory.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8. DEPLOYMENT & PIPELINE -->
+      <section>
+        <h2>8. Simple Deployment Architecture</h2>
+        <div class="flow-line" style="background-color: #faf5ff;">
+          <div class="flow-step active">Cloudflare Pages (React Web App)</div>
+          <div class="arrow">&harr;</div>
+          <div class="flow-step">Railway Cloud (Spring Boot Backend)</div>
+          <div class="arrow">&harr;</div>
+          <div class="flow-step">Railway Hosted PostgreSQL DB</div>
+        </div>
+        <p style="font-size: 9.5px; color: #64748b; text-align: center; margin-top: -4px; margin-bottom: 6px;">
+          * Environment variables configure backend database connection secrets and frontend CORS allowed origins.
+        </p>
+      </section>
+
+      <!-- 9. K6 — START FROM BASIC -->
+      <section>
+        <h2>9. Load Testing with k6</h2>
+        <div class="metrics-container">
+          <div class="metric-item">
+            <div class="metric-value">250 VUs</div>
+            <div class="metric-label">Simulated Virtual Users</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-value">88,000+</div>
+            <div class="metric-label">Total Requests Handled</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-value">732.99 /sec</div>
+            <div class="metric-label">Request Throughput</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-value">0%</div>
+            <div class="metric-label">HTTP Failure Rate</div>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <h3>Basic testing concepts:</h3>
+            <ul>
+              <li><strong>VUs (Virtual Users):</strong> Simulated clients making back-to-back REST requests to mimic
+                real load.</li>
+              <li><strong>Throughput (Requests/sec):</strong> How many API operations the Spring Boot engine
+                successfully answered each second.</li>
+              <li><strong>Error Rate:</strong> The percentage of failed responses (which remained at 0% during our
+                test).</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>The k6 Test Flow (<code class="code-term">api_benchmark.js</code>)</h3>
+            <p>For 60 seconds, 250 VUs constantly call three endpoints:</p>
+            <p class="accent-text" style="font-size: 9px; margin-top: 3px;">
+              POST /api/incidents (33%) &bull; GET /api/events/nearby (33%) &bull; GET /api/admin/clusters/{eventId}
+              (34%)
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10. FINAL — "IF INTERVIEWER ASKS..." -->
+      <section>
+        <h2>10. Rapid-Fire Interview QA</h2>
+        <div class="rapid-fire-grid">
+          <div class="qa-box">
+            <span class="q-text">1. Why DBSCAN?</span>
+            <span class="a-text">It groups points by proximity, identifies clusters without a predefined count, and
+              ignores isolated points as noise.</span>
+          </div>
+          <div class="qa-box">
+            <span class="q-text">2. Why not K-Means?</span>
+            <span class="a-text">K-Means requires specifying cluster counts upfront, handles outliers poorly, and
+              assumes spherical groups.</span>
+          </div>
+          <div class="qa-box">
+            <span class="q-text">3. What is the grid index?</span>
+            <span class="a-text">It divides the map into cells so DBSCAN only queries adjacent cells instead of
+              comparing all incidents.</span>
+          </div>
+          <div class="qa-box">
+            <span class="q-text">4. Explain the 0.92 ms speed.</span>
+            <span class="a-text">It is the in-memory execution speed of DBSCAN algorithm over incidents, excluding
+              database and network transport time.</span>
+          </div>
+          <div class="qa-box">
+            <span class="q-text">5. Entity vs DTO?</span>
+            <span class="a-text">Entities map directly to relational tables. DTOs carry data across the API, decoupling
+              client requests from table schemas.</span>
+          </div>
+          <div class="qa-box">
+            <span class="q-text">6. Controller vs Service vs Repository?</span>
+            <span class="a-text">Controller ingests requests. Service coordinates business and validation logic.
+              Repository executes database transactions.</span>
+          </div>
+          <div class="qa-box">
+            <span class="q-text">7. Why PostgreSQL?</span>
+            <span class="a-text">It is reliable, relational, and supports composite indexing on event metadata and phone
+              numbers to keep queries fast.</span>
+          </div>
+          <div class="qa-box">
+            <span class="q-text">8. Why WebSockets instead of polling?</span>
+            <span class="a-text">WebSockets hold a persistent connection to push data immediately, avoiding the network
+              overhead of periodic HTTP polling.</span>
+          </div>
+          <div class="qa-box">
+            <span class="q-text">9. What is STOMP?</span>
+            <span class="a-text">A simple messaging protocol running over WebSockets that structures data frames into
+              subscribe/publish topics.</span>
+          </div>
+          <div class="qa-box">
+            <span class="q-text">10. What was the main technical challenge?</span>
+            <span class="a-text">High concurrent database writes. Resolved by implementing a 100ms background debounce
+              scheduler to throttle DBSCAN calculations.</span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer>
+      <span>GeoWatch Interview Cheat Sheet | Performance & Questions</span>
+      <span>Confidential &copy; 2026</span>
+    </footer>
+  </div>
+
+</body>
+
+</html>
