@@ -95,7 +95,7 @@ function CreateEvent() {
       } else {
         setSearchError('Location not found.')
       }
-    } catch (err) {
+    } catch {
       setSearchError('Network error while searching.')
     } finally {
       setSearching(false)
@@ -115,7 +115,7 @@ function CreateEvent() {
         selectLocation(position.coords.latitude, position.coords.longitude, true)
         setLocating(false)
       },
-      (err) => {
+      () => {
         setSearchError('Unable to retrieve your location.')
         setLocating(false)
       },
