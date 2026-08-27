@@ -3,6 +3,7 @@ import L from 'leaflet'
 import 'leaflet.heat'
 import { Circle, CircleMarker, MapContainer, Popup, TileLayer, useMap, useMapEvents } from 'react-leaflet'
 import { useParams } from 'react-router-dom'
+import { Locate } from 'lucide-react'
 import type { Cluster, Incident, RiskLevel } from '../types/cluster'
 import type { Event } from '../types/event'
 import { getClustersByEventId, getEventById } from '../services/api'
@@ -169,6 +170,36 @@ function Dashboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
+  const [map, setMap] = useState<L.Map | null>(null)
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number; accuracy: number } | null>(null)
+  const [locating, setLocating] = useState(false)
+  const [locationError, setLocationError] = useState('')
+
+  const locateMe = () => {
+    setLocating(true)
+    setLocationError('')
+    if (!navigator.geolocation) {
+      setLocationError('Geolocation is not supported by your browser.')
+      setLocating(false)
+      return
+    }
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude, accuracy } = position.coords
+        setUserLocation({ lat: latitude, lng: longitude, accuracy })
+        if (map) {
+          map.flyTo([latitude, longitude], 15)
+        }
+        setLocating(false)
+      },
+      () => {
+        setLocationError('Unable to retrieve your location. Please check your permissions.')
+        setLocating(false)
+      },
+      { timeout: 10000, enableHighAccuracy: true }
+    )
+  }
+
   useEffect(() => {
     if (!eventId || eventId === 'undefined' || eventId === 'null') {
       console.error('Dashboard loaded without eventId')
@@ -304,11 +335,22 @@ return (
       <p className="mt-2 text-slate-300">
         Dashboard for event: {eventData.name}
       </p>
+      {locationError && <p className="mt-2 text-sm text-rose-400">{locationError}</p>}
     </div>
 
     <div className="relative overflow-hidden rounded-xl border border-slate-600">
 
-      <MapContainer center={mapCenter} zoom={15} className="h-[34rem] w-full">
+      <button
+        type="button"
+        onClick={locateMe}
+        disabled={locating}
+        title="Locate Me"
+        className="absolute left-[10px] top-[80px] z-[400] flex h-8 w-8 items-center justify-center rounded border border-slate-600 bg-slate-800 text-cyan-400 shadow-sm transition hover:bg-slate-700 disabled:opacity-50"
+      >
+        <Locate className="h-4 w-4" />
+      </button>
+
+      <MapContainer center={mapCenter} zoom={15} className="h-[34rem] w-full" ref={setMap}>
 
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -318,6 +360,21 @@ return (
 
         <MapClickHandler />
         <MapRecenter center={mapCenter} />
+
+        {userLocation && (
+          <>
+            <Circle
+              center={[userLocation.lat, userLocation.lng]}
+              radius={userLocation.accuracy}
+              pathOptions={{ color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.15, stroke: false }}
+            />
+            <CircleMarker
+              center={[userLocation.lat, userLocation.lng]}
+              radius={7}
+              pathOptions={{ color: '#ffffff', weight: 2, fillColor: '#3b82f6', fillOpacity: 1 }}
+            />
+          </>
+        )}
 
         {/* Event geofence */}
         <Circle
