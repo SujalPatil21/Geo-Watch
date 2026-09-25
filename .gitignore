@@ -120,3 +120,5 @@ desktop.ini
 **/*.swo
 **/*~
 **/tmp/
+.rocketride/
+.env

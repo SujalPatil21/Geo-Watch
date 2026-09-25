@@ -1,0 +1,278 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Design tokens (finalized MOBALERT palette) ─────────────── */
+:root {
+  --color-bg-primary: #06141b;
+  --color-bg-surface: #11212d;
+  --color-bg-deep: #253745;
+  --color-bg-muted: #4a5c6a;
+  --color-text-muted: #9ba8ab;
+  --color-text-primary: #ccd0cf;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5.5rem;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  overflow-x: hidden;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::selection {
+  background: rgba(154, 168, 171, 0.35);
+  color: #ffffff;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(17, 33, 45, 0.6);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(74, 92, 106, 0.5);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(74, 92, 106, 0.8);
+}
+
+@layer components {
+  .glass {
+    background: rgba(255, 255, 255, 0.035);
+    border: 1.5px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-radius: 20px;
+  }
+
+  .glass-dark {
+    background: rgba(0, 0, 0, 0.35);
+    border: 1.5px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(32px);
+    -webkit-backdrop-filter: blur(32px);
+    border-radius: 24px;
+  }
+
+  .glass-hover {
+    @apply transition duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:border-light/40 hover:shadow-[0_12px_40px_rgba(0,0,0,0.45)];
+  }
+
+  .gradient-border {
+    border: 1px solid transparent;
+    background:
+      linear-gradient(rgba(17, 33, 45, 0.72), rgba(17, 33, 45, 0.72)) padding-box,
+      linear-gradient(135deg, #4a5c6a, #9ba8ab, #253745) border-box;
+    backdrop-filter: blur(24px);
+  }
+
+  .glass-input {
+    @apply w-full rounded-xl border border-mid/60 bg-deep/50 px-4 py-3 text-[#ccd0cf] outline-none backdrop-blur transition placeholder:text-muted focus:border-light/80 focus:bg-deep/70 focus:ring-2 focus:ring-mid/30;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-xl bg-[#ccd0cf] px-6 py-3 text-sm font-semibold text-[#06141b] shadow-lg shadow-black/30 transition hover:brightness-110 hover:shadow-black/40 active:scale-95;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center rounded-xl border border-mid/50 bg-surface px-6 py-3 text-sm font-semibold text-[#ccd0cf] backdrop-blur transition hover:border-light/40 hover:bg-deep active:scale-95;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-[#ccd0cf] via-[#9ba8ab] to-[#4a5c6a] bg-clip-text text-transparent;
+  }
+}
+
+/* ── Animated gradient mesh / blobs ─────────────────────────── */
+@keyframes blob {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(48px, -60px) scale(1.18);
+  }
+  66% {
+    transform: translate(-36px, 36px) scale(0.92);
+  }
+}
+
+.animate-blob {
+  animation: blob 14s ease-in-out infinite;
+}
+
+@keyframes grid-pan {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 56px 56px;
+  }
+}
+
+.bg-grid-pattern {
+  background-image:
+    linear-gradient(rgba(154, 168, 171, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(154, 168, 171, 0.05) 1px, transparent 1px);
+  background-size: 56px 56px;
+  animation: grid-pan 24s linear infinite;
+}
+
+.bg-dots {
+  background-image: radial-gradient(rgba(154, 168, 171, 0.14) 1px, transparent 1px);
+  background-size: 26px 26px;
+}
+
+/* ── Risk pulse (HIGH zones) ────────────────────────────────── */
+@keyframes risk-pulse {
+  0% {
+    transform: scale(0.55);
+    opacity: 0.85;
+  }
+  70% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+
+.risk-pulse-ring {
+  animation: risk-pulse 1.6s ease-out infinite;
+}
+
+/* ── Custom cluster markers ─────────────────────────────────── */
+.geowatch-cluster-wrap {
+  background: transparent;
+  border: none;
+}
+
+.geowatch-cluster {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(17, 33, 45, 0.88);
+  border: 1px solid var(--c, #4a5c6a);
+  backdrop-filter: blur(10px);
+  color: #ccd0cf;
+  font-weight: 600;
+  font-size: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+}
+
+.geowatch-cluster .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--c, #4a5c6a);
+  box-shadow: 0 0 8px var(--c, #4a5c6a);
+}
+
+.geowatch-cluster .ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  border: 2px solid var(--c, #4a5c6a);
+  animation: risk-pulse 1.6s ease-out infinite;
+  pointer-events: none;
+}
+
+/* ── Leaflet dark-map / glass overrides ─────────────────────── */
+.leaflet-container {
+  background: #11212d;
+  font-family: inherit;
+}
+
+.leaflet-control-zoom a {
+  background: rgba(37, 55, 69, 0.85) !important;
+  color: #ccd0cf !important;
+  border-color: rgba(74, 92, 106, 0.5) !important;
+  backdrop-filter: blur(12px);
+}
+
+.leaflet-control-zoom a:hover {
+  background: rgba(74, 92, 106, 0.6) !important;
+}
+
+.leaflet-control-attribution {
+  background: rgba(6, 20, 27, 0.6) !important;
+  color: #9ba8ab !important;
+  backdrop-filter: blur(8px);
+}
+
+.leaflet-control-attribution a {
+  color: #ccd0cf !important;
+}
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  background: rgba(17, 33, 45, 0.9);
+  backdrop-filter: blur(20px);
+  color: #ccd0cf;
+  border: 1px solid rgba(74, 92, 106, 0.5);
+  border-radius: 1rem;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+}
+
+.leaflet-popup-content-wrapper {
+  padding: 0.75rem;
+}
+
+.leaflet-popup-close-button {
+  color: #9ba8ab !important;
+  font-size: 1.15rem !important;
+}
+
+.leaflet-popup-close-button:hover {
+  color: #ccd0cf !important;
+}
+
+/* Custom premium Leaflet dark theme styling override */
+.leaflet-container .leaflet-tile-container img {
+  filter: invert(100%) hue-rotate(180deg) brightness(85%) contrast(90%);
+}
+
+
+/* Custom premium theme calendar/date-time input styling */
+input[type="datetime-local"] {
+  color-scheme: dark !important;
+  border-radius: 12px !important;
+  background: rgba(255, 255, 255, 0.035) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.08) !important;
+  color: #ccd0cf !important;
+}
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.8) sepia(50%) saturate(1000%) hue-rotate(140deg);
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 4px;
+  transition: all 0.2s ease;
+}
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
+  background: rgba(34, 211, 238, 0.15);
+  filter: invert(1.0) sepia(50%) saturate(1000%) hue-rotate(140deg);
+}
